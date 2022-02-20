@@ -1,4 +1,18 @@
 spring:
   application:
     name: catalog
+  datasource:
+    url: jdbc:h2:mem:catalog
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    database: h2
+    database-platform: org.hibernate.dialect.H2Dialect
+    generate-ddl: true
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+
 message: hello(run with default profile)

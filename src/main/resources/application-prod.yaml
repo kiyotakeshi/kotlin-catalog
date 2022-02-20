@@ -1,0 +1,2 @@
+# -Dspring.profiles.active=prod
+message: hello(run with prod profile)

@@ -16,4 +16,13 @@ class CourseController(
     fun addCourse(@RequestBody courseDto: CourseDto): CourseDto {
         return courseService.addCourse(courseDto)
     }
+
+    @GetMapping
+    fun retrieveAllCourses(): List<CourseDto> = courseService.retrieveAllCourses()
+
+    @PutMapping("/{courseId}")
+    fun updateCourse(
+        @RequestBody courseDto: CourseDto,
+        @PathVariable("courseId") courseId: Int
+    ): CourseDto = courseService.updateCourse(courseId, courseDto)
 }

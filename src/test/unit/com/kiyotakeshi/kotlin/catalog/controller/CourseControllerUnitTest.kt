@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.web.reactive.server.WebTestClient
+import java.lang.RuntimeException
 
 @WebMvcTest(controllers = [CourseController::class])
 @AutoConfigureWebTestClient
@@ -46,6 +47,52 @@ class CourseControllerUnitTest {
         Assertions.assertTrue {
             actual!!.id != null
         }
+    }
+
+    @Test
+    fun addCourse_validation() {
+        val courseDto = CourseDto(null, "", "")
+
+        every {
+            courseServiceMockk.addCourse(any())
+        } returns createCourseDto(id = 100)
+
+        val actual = webTestClient
+            .post()
+            .uri("/v1/courses")
+            .bodyValue(courseDto)
+            .exchange()
+            .expectStatus().isBadRequest
+            .expectBody(String::class.java)
+            .returnResult()
+            .responseBody
+
+        Assertions.assertEquals(
+            "course dto category must not be blank, course dto name must not be blank",
+            actual
+        )
+    }
+
+    @Test
+    fun addCourse_runtimeException() {
+        val courseDto = CourseDto(null, "kotlin REST API", "API")
+
+        val errorMessage = "unexpected error occurred"
+        every {
+            courseServiceMockk.addCourse(any())
+        } throws RuntimeException(errorMessage)
+
+        val actual = webTestClient
+            .post()
+            .uri("/v1/courses")
+            .bodyValue(courseDto)
+            .exchange()
+            .expectStatus().is5xxServerError
+            .expectBody(String::class.java)
+            .returnResult()
+            .responseBody
+
+        Assertions.assertEquals(errorMessage, actual)
     }
 
     @Test

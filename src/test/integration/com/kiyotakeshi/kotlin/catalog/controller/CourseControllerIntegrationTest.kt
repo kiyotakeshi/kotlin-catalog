@@ -85,4 +85,16 @@ class CourseControllerIntegrationTest {
         Assertions.assertEquals("update", actual!!.name)
         Assertions.assertEquals("API", actual!!.category)
     }
+
+    @Test
+    fun deleteCourse() {
+        val course = Course(null, "create API with kotlin(Spring Boot)", "API")
+        courseRepository.save(course)
+
+        webTestClient
+            .delete()
+            .uri("/v1/courses/{courseId}", course.id)
+            .exchange()
+            .expectStatus().isNoContent
+    }
 }

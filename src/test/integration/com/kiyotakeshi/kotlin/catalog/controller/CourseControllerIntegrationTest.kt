@@ -1,9 +1,11 @@
 package com.kiyotakeshi.kotlin.catalog.controller
 
 import com.kiyotakeshi.kotlin.catalog.controller.util.courseEntityList
+import com.kiyotakeshi.kotlin.catalog.controller.util.createInstructorEntity
 import com.kiyotakeshi.kotlin.catalog.dto.CourseDto
 import com.kiyotakeshi.kotlin.catalog.entity.Course
 import com.kiyotakeshi.kotlin.catalog.repository.CourseRepository
+import com.kiyotakeshi.kotlin.catalog.repository.InstructorRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,16 +27,26 @@ class CourseControllerIntegrationTest {
     @Autowired
     lateinit var courseRepository: CourseRepository
 
+    @Autowired
+    lateinit var instructorRepository: InstructorRepository
+
     @BeforeEach
     internal fun setUp() {
+        instructorRepository.deleteAll()
         courseRepository.deleteAll()
-        val courses = courseEntityList()
+
+        val instructor = createInstructorEntity()
+        instructorRepository.save(instructor)
+
+        val courses = courseEntityList(instructor)
         courseRepository.saveAll(courses)
     }
 
     @Test
     fun addCourse() {
-        val courseDto = CourseDto(null, "kotlin REST API", "API")
+
+        val instructor = instructorRepository.findAll().first()
+        val courseDto = CourseDto(null, "kotlin REST API", "API", instructor.id)
 
         val actual = webTestClient
             .post()
@@ -88,10 +100,12 @@ class CourseControllerIntegrationTest {
 
     @Test
     fun updateCourse() {
-        val course = Course(null, "create API with kotlin(Spring Boot)", "API")
+        val instructor = instructorRepository.findAll().first()
+
+        val course = Course(null, "create API with kotlin(Spring Boot)", "API", instructor)
         courseRepository.save(course)
 
-        val updateDto = CourseDto(null, "update", "API")
+        val updateDto = CourseDto(null, "update", "API", course.instructor!!.id)
 
         val actual = webTestClient
             .put()
@@ -104,12 +118,14 @@ class CourseControllerIntegrationTest {
             .responseBody
 
         Assertions.assertEquals("update", actual!!.name)
-        Assertions.assertEquals("API", actual!!.category)
+        Assertions.assertEquals("API", actual.category)
     }
 
     @Test
     fun deleteCourse() {
-        val course = Course(null, "create API with kotlin(Spring Boot)", "API")
+        val instructor = instructorRepository.findAll().first()
+
+        val course = Course(null, "create API with kotlin(Spring Boot)", "API", instructor)
         courseRepository.save(course)
 
         webTestClient

@@ -37,6 +37,15 @@ class GlobalErrorHandler : ResponseEntityExceptionHandler() {
     }
 
     // this function get invoked for any kind of runtime exception
+    @ExceptionHandler(InstructorNotValidException::class)
+    fun handleInstructorNotValidException(ex: InstructorNotValidException, request: WebRequest): ResponseEntity<Any> {
+
+        logger.error("Exception occurred : ${ex.message}", ex)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ex.message)
+    }
+
+    // this function get invoked for any kind of runtime exception
     @ExceptionHandler(Exception::class)
     fun handleAllExceptions(ex: Exception, request: WebRequest): ResponseEntity<Any> {
 

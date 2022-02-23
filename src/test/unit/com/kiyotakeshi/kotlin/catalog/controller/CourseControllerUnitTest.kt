@@ -27,7 +27,7 @@ class CourseControllerUnitTest {
 
     @Test
     fun addCourse() {
-        val courseDto = CourseDto(null, "kotlin REST API", "API")
+        val courseDto = CourseDto(null, "kotlin REST API", "API", 1)
 
         every {
             courseServiceMockk.addCourse(any())
@@ -49,8 +49,8 @@ class CourseControllerUnitTest {
     }
 
     @Test
-    fun addCourse_validation() {
-        val courseDto = CourseDto(null, "", "")
+    fun addCourseValidation() {
+        val courseDto = CourseDto(null, "", "", 1)
 
         every {
             courseServiceMockk.addCourse(any())
@@ -73,8 +73,8 @@ class CourseControllerUnitTest {
     }
 
     @Test
-    fun addCourse_runtimeException() {
-        val courseDto = CourseDto(null, "kotlin REST API", "API")
+    fun addCourseRuntimeException() {
+        val courseDto = CourseDto(null, "kotlin REST API", "API", 1)
 
         val errorMessage = "unexpected error occurred"
         every {

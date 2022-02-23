@@ -2,7 +2,6 @@ package com.kiyotakeshi.kotlin.catalog.controller
 
 import com.kiyotakeshi.kotlin.catalog.controller.util.createCourseDto
 import com.kiyotakeshi.kotlin.catalog.dto.CourseDto
-import com.kiyotakeshi.kotlin.catalog.entity.Course
 import com.kiyotakeshi.kotlin.catalog.service.CourseService
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
@@ -99,7 +98,7 @@ class CourseControllerUnitTest {
     fun retrieveAllCourses() {
 
         every {
-            courseServiceMockk.retrieveAllCourses()
+            courseServiceMockk.retrieveAllCourses(any())
         }.returnsMany(
             listOf(
                 createCourseDto(id = 101),
